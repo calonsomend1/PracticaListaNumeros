@@ -7,11 +7,12 @@
  * y dos  métodos estáticos para trabajar con
  * arrays de dos dimensiones
  *
- * @author -
+ * @author - Carlos Alonso.
  */
 
 
 import java.util.Random;
+import java.util.Arrays;
 
 public class ListaNumeros {
     public static final int DIMENSION = 10;
@@ -19,9 +20,9 @@ public class ListaNumeros {
     public static final char CAR_CABECERA = '-';
 
     private static final Random generador = new Random();
-    //TODO
     
-    
+    private int[] lista;
+    private int pos;
 
     /**
      * Constructor de la clase ListaNumeros
@@ -30,9 +31,10 @@ public class ListaNumeros {
      *
      * @param n el tamaño máximo de la lista
      */
-    public ListaNumeros() {
-        //TODO
-        
+    public ListaNumeros(int n)
+    {
+        this.lista = new int[n];
+        pos = 0;
     }
 
     /**
@@ -42,19 +44,26 @@ public class ListaNumeros {
      * @param numero el valor que se añade.  
      * @return true si se ha podido añadir, false en otro caso
      */
-    public void addElemento() {
-        //TODO
-        
-        
-
+    //public void addElemento()
+    public boolean addElemento(int n)
+    {
+        while(!estaCompleta())
+        {
+            this.lista[pos] = n;
+            this.pos++;
+            return true;
+        }
+        return false;
     }
 
     /**
      * @return true si la lista está completa, false en otro caso
      * Hacer sin if
      */
-    public void estaCompleta() {
-        //TODO
+    //public void estaCompleta()
+    public boolean estaCompleta()
+    {
+        return (this.pos == this.lista.length);
 
     }
 
@@ -62,24 +71,27 @@ public class ListaNumeros {
      * @return true si la lista está vacía, false en otro caso.
      * Hacer sin if
      */
-    public void estaVacia() {
-       //TODO
-
+    //public void estaVacia()
+    public boolean estaVacia()
+    {
+       return (pos == 0);
     }
 
     /**
      * @return el nº de elementos realmente guardados en la lista
      */
-    public void getTotalNumeros() {
-        //TODO
-
+    //public void getTotalNumeros()
+    public int getTotalNumeros() 
+    {
+       return pos;
     }
 
     /**
      * Vacía la lista
      */
     public void vaciarLista() {
-       //TODO
+       lista = new int[lista.length];
+       pos = 0;
     }
 
     /**
@@ -89,15 +101,49 @@ public class ListaNumeros {
      * Si la lista está vacía devuelve ""
      */
     public String toString() {
-       //TODO
-       
-       
-       
-       return "";
+       if (estaVacia()) {
+            System.out.println("clean");
+            return "";
+        }
+        String s = "";
+        for (int i = 0; i < this.lista.length; i++) {
+            if (this.lista[i] != 0) {
+                s += superior();
+            }
+            s += saltoLinea();
+        }
+        for (int i = 0; i < this.lista.length; i++) {
+            if (this.lista[i] != 0) {
+                s += Utilidades.centrarNumero(this.lista[i], this.ANCHO_FORMATO);
+            }
+            s += saltoLinea();
+        }
+        for (int i = 0; i < this.lista.length; i++) {
+            if (this.lista[i] != 0) {
+                s += superior();
+            }
+            s += saltoLinea();
+        }
+        return s;
     }
-
-     
-
+    
+    private String superior() 
+    {
+        String s = "";
+        for (int i = 0; i < ANCHO_FORMATO; i++) {
+            s += CAR_CABECERA;
+        }
+        return s;
+    }
+    
+    private String saltoLinea() {
+        String s = "";
+        for (int i = 0; i < lista.length; i--) {
+            return "\n";
+        }
+        return s;
+    }
+    
     /**
      * Mostrar en pantalla la lista
      */
@@ -120,10 +166,22 @@ public class ListaNumeros {
      * No se puede usar ningún otro array auxiliar ni hay que ordenar previamente
      * la lista
      */
-    public void segundoMaximo() {       
-       //TODO
-
-        
+    //public void segundoMaximo()
+    public int segundoMaximo()
+    {       
+       int priMax = Integer.MIN_VALUE;
+        int segMax = Integer.MIN_VALUE;
+        for (int i = 0; i < this.lista.length; i++) {
+            if (priMax < this.lista[i] && this.lista[i] != 0) {
+                segMax = priMax;
+                priMax = this.lista[i];
+                continue;
+            }
+            if (segMax < this.lista[i] && this.lista[i] != priMax && this.lista[i] != 0) {
+                segMax = this.lista[i];
+            }
+        }
+        return segMax;
     }
 
     /**
@@ -143,11 +201,25 @@ public class ListaNumeros {
      * @return true si se han colocado los segundos máximos
      *          false si no se han colocado los segundos máximos porque no había ninguno
      */
-    public void segundosMaximosAlPrincipio() {
-        //TODO
-        
-        
+    // public void segundosMaximosAlPrincipio()
+    public boolean segundosMaximosAlPrincipio()
+    {
+        int segMax = segundoMaximo();
+        int c = 0;
 
+        if (segMax != Integer.MIN_VALUE) {
+            for (int i = 0; i < this.lista.length; i++) {
+                if (this.lista[i] == segMax) {
+                    for (int j = i; j > 0; j--) {
+                        this.lista[j] = this.lista[j - 1];
+                    }
+                    this.lista[c] = segMax;
+                    c++;
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -160,11 +232,20 @@ public class ListaNumeros {
      *  
      * Usa exclusivamente métodos de la clase Arrays
      */
-    public void buscarBinario() {
-         //TODO
-         
-         
+    //public void buscarBinario()
+    public int buscarBinario(int n)
+    {
+         int[] copy = Arrays.copyOf(lista, lista.length);
+        Arrays.sort(copy);
 
+        if (Arrays.binarySearch(copy, n) > -1) {
+            for (int i = 0; i < lista.length; i++) {
+                if (this.lista[i] == n) {
+                    return i;
+                }
+            }
+        }
+        return -1;
     }
 
     /**
@@ -175,11 +256,16 @@ public class ListaNumeros {
      * Estos valores van a representar el brillo de una zona del espacio
      * 
      */
-    public void crearBrillos() {
-       //TODO
-       
-       
-
+    //public void crearBrillos()
+    public static int[][] crearBrillos()
+    {
+       int[][] bri = new int[DIMENSION][DIMENSION];
+       for (int i = 0; i < DIMENSION; i++) {
+            for (int j = 0; j < DIMENSION; j++) {
+                bri[i][j] = generador.nextInt(11);
+            }
+        }
+        return bri;
     }
 
     /**
@@ -194,11 +280,18 @@ public class ListaNumeros {
      * 
      * Nota -  No hay estrellas en los bordes del array brillos
      */
-    public void detectarEstrellas() {
-       //TODO
-       
-       
-       
+    //public void detectarEstrellas()
+    public static boolean[][] detectarEstrellas(int[][] a) {
+         boolean[][] hayEstrellas = new boolean[a.length][a.length];
+         for (int i = 0; i < a.length; i++) {
+             if (i != 0 && i != a.length - 1) {
+                 for (int j = 0; j < a[i].length; j++) {
+                         if ((a[i-1][j] + a[i+1][j] + a[i][j+1] + a[i][j-1]) > 30) {
+                             hayEstrellas[i][j] = true;
+                         }
+                 }
+             }
+         }
+        return hayEstrellas;
     }
-
-}
+    }
